@@ -1,0 +1,105 @@
+import { StyleSheet, Platform } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: wp("5%"),
+    backgroundColor: "#f5f5f5",
+  },
+  scrollContainer: {
+    paddingHorizontal: 25,
+    paddingTop: 20,
+    paddingBottom: 40,
+    backgroundColor: "#f5f5f5",
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#333",
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  subHeader: {
+    fontSize: hp("2%"),
+    textAlign: "center",
+    marginBottom: hp("4%"),
+    color: "#666",
+  },
+  input: {
+    backgroundColor: "#fff",
+    padding: hp("1.8%"),
+    borderRadius: 12,
+    marginBottom: hp("1.5%"),
+    borderWidth: 1,
+    borderColor: "#ddd",
+    fontSize: hp("1.8%"),
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginBottom: hp("1.5%"),
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  passwordInput: {
+    flex: 1,
+    padding: hp("1.8%"),
+    fontSize: hp("1.8%"),
+  },
+  eyeIcon: {
+    paddingHorizontal: 15,
+  },
+  button: {
+    padding: hp("2%"),
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: hp("1%"),
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: hp("2.2%"),
+    fontWeight: "bold",
+  },
+  roleButton: {
+    backgroundColor: "#007AFF",
+    padding: hp("3%"),
+    borderRadius: 15,
+    marginBottom: hp("2%"),
+    alignItems: "center",
+  },
+  roleButtonText: {
+    color: "#fff",
+    fontSize: hp("2.5%"),
+    fontWeight: "bold",
+  },
+  roleDescription: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: hp("1.8%"),
+    marginTop: 5,
+  },
+  backButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  backButtonText: {
+    color: "#007AFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  sectionTitle: {
+    fontSize: hp("2.2%"),
+    fontWeight: "bold",
+    marginBottom: hp("1.5%"),
+    marginTop: hp("1%"),
+    color: "#333",
+  },
+});
