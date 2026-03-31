@@ -60,6 +60,10 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     padding: wp("2%"),
   },
+  navText: {
+    fontSize: 9, // 5 ikon olduğu için fontu bir tık küçültmek daha zarif durur
+    marginTop: 2,
+  },
   signOutText: {
     color: "#fff",
     fontWeight: "600",

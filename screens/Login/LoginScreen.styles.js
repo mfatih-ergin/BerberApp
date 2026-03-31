@@ -7,33 +7,42 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: wp("8%"),
     backgroundColor: "#f5f5f5",
   },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: wp("8%"),
+    justifyContent: "center",
+    paddingBottom: hp("5%"),
+  },
+  headerContainer: {
+    marginBottom: hp("4%"),
+    alignItems: "center",
+  },
   header: {
-    fontSize: hp("4%"),
+    fontSize: hp("3.5%"),
     fontWeight: "bold",
-    textAlign: "center",
     color: "#333",
     marginBottom: hp("1%"),
   },
   subHeader: {
-    fontSize: hp("2%"),
-    textAlign: "center",
-    marginBottom: hp("5%"),
+    fontSize: hp("1.8%"),
     color: "#666",
+  },
+  formContainer: {
+    width: "100%",
   },
   inputContainer: {
     marginBottom: hp("2%"),
   },
   input: {
     backgroundColor: "#fff",
-    padding: hp("2%"),
+    padding: hp("1.8%"),
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ddd",
-    fontSize: hp("2%"),
+    fontSize: hp("1.8%"),
+    color: "#333",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -46,8 +55,9 @@ export const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    padding: hp("2%"),
-    fontSize: hp("2%"),
+    padding: hp("1.8%"),
+    fontSize: hp("1.8%"),
+    color: "#333",
   },
   eyeIcon: {
     paddingHorizontal: 15,
@@ -62,10 +72,11 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    marginTop: hp("1%"),
   },
   buttonText: {
     color: "#fff",
-    fontSize: hp("2.2%"),
+    fontSize: hp("2%"),
     fontWeight: "bold",
   },
   footer: {
@@ -74,11 +85,11 @@ export const styles = StyleSheet.create({
     marginTop: hp("4%"),
   },
   footerText: {
-    fontSize: hp("1.8%"),
+    fontSize: hp("1.7%"),
     color: "#666",
   },
   linkText: {
-    fontSize: hp("1.8%"),
+    fontSize: hp("1.7%"),
     color: "#007AFF",
     fontWeight: "bold",
   },

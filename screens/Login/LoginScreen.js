@@ -7,6 +7,9 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,7 +30,7 @@ export default function LoginScreen({ onNavigateToRegister }) {
 
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email: email,
+      email: email.trim(),
       password: password,
     });
 
@@ -41,57 +44,70 @@ export default function LoginScreen({ onNavigateToRegister }) {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <Text style={styles.header}>Tekrar Merhaba! 👋</Text>
-        <Text style={styles.subHeader}>Hesabınıza giriş yapın</Text>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="E-posta"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-        </View>
-
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Şifre"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!isPasswordVisible}
-          />
-          <TouchableOpacity
-            style={styles.eyeIcon}
-            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
-            <Ionicons
-              name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
-              size={22}
-              color="#666"
-            />
-          </TouchableOpacity>
-        </View>
+            <View style={styles.headerContainer}>
+              <Text style={styles.header}>Tekrar Merhaba! 👋</Text>
+              <Text style={styles.subHeader}>Hesabınıza giriş yapın</Text>
+            </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSignIn}
-          disabled={loading}
-        >
-          <Text style={styles.buttonText}>
-            {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
-          </Text>
-        </TouchableOpacity>
+            <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="E-posta"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+              </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Hesabınız yok mu? </Text>
-          <TouchableOpacity onPress={onNavigateToRegister}>
-            <Text style={styles.linkText}>Kayıt Ol</Text>
-          </TouchableOpacity>
-        </View>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Şifre"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!isPasswordVisible}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                >
+                  <Ionicons
+                    name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
+                    size={22}
+                    color="#666"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleSignIn}
+                disabled={loading}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Hesabınız yok mu? </Text>
+                <TouchableOpacity onPress={onNavigateToRegister}>
+                  <Text style={styles.linkText}>Kayıt Ol</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
