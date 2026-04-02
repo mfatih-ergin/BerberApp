@@ -22,14 +22,15 @@ export default function RegisterScreen({ onNavigateToLogin }) {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
   const [shopName, setShopName] = useState("");
   const [shopAddress, setShopAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   async function handleSignUp() {
-    if (!email || !password || !fullName) {
-      Alert.alert("Hata", "Lütfen zorunlu alanları doldurun.");
+    if (!email || !password || !fullName || !location) {
+      Alert.alert("Hata", "Lütfen konum dahil tüm zorunlu alanları doldurun.");
       return;
     }
     setLoading(true);
@@ -43,11 +44,15 @@ export default function RegisterScreen({ onNavigateToLogin }) {
 
     const user = data?.user;
     if (user) {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([
-          { id: user.id, full_name: fullName, role: role, phone_number: phone },
-        ]);
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          id: user.id,
+          full_name: fullName,
+          role: role,
+          phone_number: phone,
+          location: location,
+        },
+      ]);
 
       if (profileError) {
         Alert.alert("Profil Hatası", profileError.message);
@@ -139,6 +144,13 @@ export default function RegisterScreen({ onNavigateToLogin }) {
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Şehir (Örn: İstanbul)"
+            value={location}
+            onChangeText={setLocation}
           />
 
           <View style={styles.passwordContainer}>

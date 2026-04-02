@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
     padding: wp("2%"),
   },
   navText: {
-    fontSize: 9, // 5 ikon olduğu için fontu bir tık küçültmek daha zarif durur
+    fontSize: 9,
     marginTop: 2,
   },
   signOutText: {

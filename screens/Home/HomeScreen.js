@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Text,
   View,
+  Text,
   TextInput,
   BackHandler,
   ToastAndroid,
@@ -12,8 +12,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./HomeScreen.styles";
 
 import SettingsScreen from "../Settings/SettingsScreen";
-import { useTheme } from "../../context/ThemeContext";
+import ProfileScreen from "../Profile/ProfileScreen";
 import BottomNavbar from "../../components/BottomNavbar";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function HomeScreen() {
   const { theme, colors } = useTheme();
@@ -55,7 +56,6 @@ export default function HomeScreen() {
       "hardwareBackPress",
       backAction,
     );
-
     return () => backHandler.remove();
   }, [currentTab]);
 
@@ -70,50 +70,62 @@ export default function HomeScreen() {
     }
   };
 
-  const handleBackFromSettings = () => {
-    navigationHistory.current.pop();
-    const prev =
-      navigationHistory.current[navigationHistory.current.length - 1] || "home";
-    setCurrentTab(prev);
+  const handleBackNavigation = () => {
+    handleTabChange("home");
   };
-
-  if (currentTab === "settings") {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <SettingsScreen onBack={handleBackFromSettings} />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <View style={styles.headerSection}>
-        <View
-          style={[
-            styles.searchContainer,
-            { backgroundColor: theme === "light" ? "#F0F0F0" : colors.card },
-          ]}
-        >
-          <Ionicons name="search" size={20} color={colors.subText} />
-          <TextInput
-            style={[styles.searchInput, { color: colors.text }]}
-            placeholder="Berber veya hizmet ara..."
-            placeholderTextColor={colors.subText}
-            value={search}
-            onChangeText={setSearch}
-          />
-        </View>
-      </View>
+      <View style={{ flex: 1 }}>
+        {currentTab === "home" && (
+          <>
+            <View style={styles.headerSection}>
+              <View
+                style={[
+                  styles.searchContainer,
+                  {
+                    backgroundColor:
+                      theme === "light" ? "#F0F0F0" : colors.card,
+                  },
+                ]}
+              >
+                <Ionicons name="search" size={20} color={colors.subText} />
+                <TextInput
+                  style={[styles.searchInput, { color: colors.text }]}
+                  placeholder="Berber veya hizmet ara..."
+                  placeholderTextColor={colors.subText}
+                  value={search}
+                  onChangeText={setSearch}
+                />
+              </View>
+            </View>
 
-      <View style={styles.mainContent}>
-        <Text style={[styles.welcomeText, { color: colors.text }]}>
-          Hoş Geldiniz! 🎉
-        </Text>
-        <Text style={[styles.subText, { color: colors.subText }]}>
-          Size en yakın berberleri bulup randevu alabilirsiniz.
-        </Text>
+            <View style={styles.mainContent}>
+              <Text style={[styles.welcomeText, { color: colors.text }]}>
+                Hoş Geldiniz! 🎉
+              </Text>
+              <Text style={[styles.subText, { color: colors.subText }]}>
+                Size en yakın berberleri bulup randevu alabilirsiniz.
+              </Text>
+            </View>
+          </>
+        )}
+
+        {currentTab === "profile" && <ProfileScreen />}
+
+        {currentTab === "settings" && (
+          <SettingsScreen onBack={handleBackNavigation} />
+        )}
+
+        {(currentTab === "favorites" || currentTab === "map") && (
+          <View style={styles.mainContent}>
+            <Text style={{ color: colors.text }}>
+              {currentTab.toUpperCase()} Sayfası Yakında...
+            </Text>
+          </View>
+        )}
       </View>
 
       <BottomNavbar

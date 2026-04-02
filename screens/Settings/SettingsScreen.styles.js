@@ -10,24 +10,24 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingTop: hp("2%"),
+    paddingTop: hp("3%"),
   },
   section: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    marginBottom: hp("3%"),
+    marginBottom: hp("4%"),
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: hp("1.8%"),
-    paddingHorizontal: wp("5%"),
+    paddingVertical: hp("2.5%"),
+    paddingHorizontal: wp("6%"),
     borderBottomWidth: 1,
   },
   rowText: {
     flex: 1,
     marginLeft: wp("4%"),
-    fontSize: hp("2%"),
+    fontSize: hp("2.2%"),
   },
   logoutText: {
     color: Colors.danger,

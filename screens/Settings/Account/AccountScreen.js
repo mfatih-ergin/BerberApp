@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  Text,
   View,
+  Text,
   TouchableOpacity,
-  TextInput,
   ScrollView,
   Alert,
   ActivityIndicator,
@@ -16,87 +15,91 @@ import SettingsHeader from "../SettingsHeader";
 
 export default function AccountScreen({ onBack }) {
   const { colors } = useTheme();
+  const [deleting, setDeleting] = useState(false);
 
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
-
-  useEffect(() => {
-    getProfile();
-  }, []);
-
-  async function getProfile() {
+  const handlePasswordReset = async () => {
     try {
-      setLoading(true);
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
       if (user) {
-        let { data, error, status } = await supabase
-          .from("profiles")
-          .select(`full_name, phone_number`)
-          .eq("id", user.id)
-          .single();
-
-        if (error && status !== 406) {
-          throw error;
-        }
-
-        if (data) {
-          setFullName(data.full_name || "");
-          setPhone(data.phone_number || "");
-        }
+        const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+        if (error) throw error;
+        Alert.alert(
+          "Başarılı",
+          "Şifre sıfırlama e-postası e-posta adresinize gönderildi.",
+        );
       }
     } catch (error) {
-      Alert.alert("Hata", "Profil bilgileri yüklenemedi: " + error.message);
-    } finally {
-      setLoading(false);
+      Alert.alert("Hata", error.message);
     }
-  }
+  };
 
-  async function handleUpdate() {
-    if (!fullName.trim()) {
-      Alert.alert("Uyarı", "Lütfen adınızı ve soyadınızı giriniz.");
-      return;
-    }
+  const handleDeleteAccount = async () => {
+    Alert.alert(
+      "Hesabı Sil",
+      "Hesabınızı ve tüm verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      [
+        { text: "Vazgeç", style: "cancel" },
+        {
+          text: "Evet, Sil",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setDeleting(true);
+              const {
+                data: { user },
+              } = await supabase.auth.getUser();
 
-    try {
-      setUpdating(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+              if (!user) throw new Error("Kullanıcı bulunamadı.");
 
-      const updates = {
-        id: user.id,
-        full_name: fullName.trim(),
-        phone_number: phone.trim(),
-      };
+              const userId = user.id;
 
-      let { error } = await supabase.from("profiles").upsert(updates);
+              const { data: profileData } = await supabase
+                .from("profiles")
+                .select("avatar_url")
+                .eq("id", userId)
+                .single();
 
-      if (error) throw error;
-      Alert.alert("Başarılı", "Bilgileriniz güncellendi!");
-    } catch (error) {
-      Alert.alert("Hata", "Güncelleme başarısız: " + error.message);
-    } finally {
-      setUpdating(false);
-    }
-  }
+              if (profileData?.avatar_url) {
+                const urlParts = profileData.avatar_url.split("/");
+                const fileName = urlParts[urlParts.length - 1];
+                const fullPath = `${userId}/${fileName}`;
 
-  if (loading) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: colors.background, justifyContent: "center" },
-        ]}
-      >
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+                const { error: storageError } = await supabase.storage
+                  .from("avatars")
+                  .remove([fullPath]);
+
+                if (storageError) {
+                  console.log(
+                    "Resim silinemedi (Dosya bulunamadı veya yetki sorunu):",
+                    storageError.message,
+                  );
+                }
+              }
+
+              const { error: deleteError } = await supabase
+                .from("profiles")
+                .delete()
+                .eq("id", user.id);
+
+              if (deleteError) throw deleteError;
+
+              await supabase.auth.signOut();
+              Alert.alert("Hoşça Kalın", "Hesabınız başarıyla silindi.");
+            } catch (error) {
+              Alert.alert(
+                "Hata",
+                "Hesap silinirken bir sorun oluştu: " + error.message,
+              );
+            } finally {
+              setDeleting(false);
+            }
+          },
+        },
+      ],
     );
-  }
+  };
 
   return (
     <View
@@ -109,43 +112,8 @@ export default function AccountScreen({ onBack }) {
 
       <ScrollView style={styles.content}>
         <Text style={[styles.sectionTitle, { color: colors.subText }]}>
-          KİŞİSEL BİLGİLER
-        </Text>
-
-        <View
-          style={[
-            styles.section,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <View style={[styles.inputRow, { borderBottomColor: colors.border }]}>
-            <Ionicons name="person-outline" size={20} color={colors.subText} />
-            <TextInput
-              style={[styles.input, { color: colors.text }]}
-              placeholder="Ad Soyad"
-              placeholderTextColor={colors.subText}
-              value={fullName}
-              onChangeText={setFullName}
-            />
-          </View>
-
-          <View style={[styles.inputRow, { borderBottomWidth: 0 }]}>
-            <Ionicons name="call-outline" size={20} color={colors.subText} />
-            <TextInput
-              style={[styles.input, { color: colors.text }]}
-              placeholder="Telefon Numarası"
-              placeholderTextColor={colors.subText}
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
-          </View>
-        </View>
-
-        <Text style={[styles.sectionTitle, { color: colors.subText }]}>
           GÜVENLİK
         </Text>
-
         <View
           style={[
             styles.section,
@@ -154,20 +122,7 @@ export default function AccountScreen({ onBack }) {
         >
           <TouchableOpacity
             style={[styles.row, { borderBottomWidth: 0 }]}
-            onPress={() =>
-              Alert.alert(
-                "Şifre",
-                "Şifre sıfırlama e-postası kayıtlı adresinize gönderilsin mi?",
-                [
-                  { text: "Vazgeç", style: "cancel" },
-                  {
-                    text: "Gönder",
-                    onPress: () =>
-                      Alert.alert("Başarılı", "E-posta gönderildi!"),
-                  },
-                ],
-              )
-            }
+            onPress={handlePasswordReset}
           >
             <Ionicons
               name="lock-closed-outline"
@@ -175,26 +130,46 @@ export default function AccountScreen({ onBack }) {
               color={colors.text}
             />
             <Text style={[styles.rowText, { color: colors.text }]}>
-              Şifre Değiştir
+              Şifre Sıfırlama E-postası Gönder
             </Text>
             <Ionicons name="chevron-forward" size={18} color={colors.border} />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
+        <Text style={[styles.sectionTitle, { color: "#FF3B30" }]}>
+          HESABI SİL
+        </Text>
+        <View
           style={[
-            styles.updateButton,
-            { backgroundColor: colors.primary, opacity: updating ? 0.7 : 1 },
+            styles.section,
+            { backgroundColor: colors.card, borderColor: colors.border },
           ]}
-          onPress={handleUpdate}
-          disabled={updating}
         >
-          {updating ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.updateButtonText}>Değişiklikleri Kaydet</Text>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, { borderBottomWidth: 0 }]}
+            onPress={handleDeleteAccount}
+            disabled={deleting}
+          >
+            <Ionicons name="trash-outline" size={20} color="#FF3B30" />
+            <Text style={[styles.rowText, { color: "#FF3B30" }]}>
+              {deleting ? "Hesap Siliniyor..." : "Hesabı Kalıcı Olarak Sil"}
+            </Text>
+            {deleting ? (
+              <ActivityIndicator size="small" color="#FF3B30" />
+            ) : (
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={colors.border}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <Text style={[styles.infoText, { color: colors.subText }]}>
+          Hesabınızı sildiğinizde randevularınız, dükkan bilgileriniz ve
+          profiliniz kalıcı olarak sistemden kaldırılır.
+        </Text>
       </ScrollView>
     </View>
   );
