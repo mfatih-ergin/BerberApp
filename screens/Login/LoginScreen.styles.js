@@ -93,4 +93,16 @@ export const styles = StyleSheet.create({
     color: "#007AFF",
     fontWeight: "bold",
   },
+  rememberMeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingLeft: 5,
+  },
+  rememberMeText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: "#444",
+    fontWeight: "500",
+  },
 });

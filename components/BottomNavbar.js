@@ -1,9 +1,68 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
+import { supabase } from "../lib/supabase";
 import { styles } from "../screens/Home/HomeScreen.styles";
+import NavbarItem from "./NavbarItem";
 
 export default function BottomNavbar({ currentTab, setCurrentTab, colors }) {
+  const [role, setRole] = useState("customer");
+
+  useEffect(() => {
+    getUserRole();
+  }, []);
+
+  async function getUserRole() {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (data) setRole(data.role);
+      }
+    } catch (error) {
+      console.log("Rol çekme hatası:", error.message);
+    }
+  }
+
+  const barberItems = [
+    {
+      id: "analytics",
+      label: "Analiz",
+      icon: "analytics",
+      activeColor: "#FFD700",
+    },
+    {
+      id: "calendar",
+      label: "Takvim",
+      icon: "calendar",
+      activeColor: "#34C759",
+    },
+    { id: "home", label: "Ana Sayfa", icon: "home" },
+    { id: "shop", label: "Dükkan", icon: "storefront" },
+    { id: "settings", label: "Ayarlar", icon: "settings" },
+  ];
+
+  const customerItems = [
+    {
+      id: "favorites",
+      label: "Favoriler",
+      icon: "star",
+      activeColor: "#FFD700",
+    },
+    { id: "map", label: "Harita", icon: "map", activeColor: "#34C759" },
+    { id: "home", label: "Ana Sayfa", icon: "home" },
+    { id: "profile", label: "Profil", icon: "person" },
+    { id: "settings", label: "Ayarlar", icon: "settings" },
+  ];
+
+  const navItems = role === "barber" ? barberItems : customerItems;
+
   return (
     <View
       style={[
@@ -11,105 +70,15 @@ export default function BottomNavbar({ currentTab, setCurrentTab, colors }) {
         { backgroundColor: colors.card, borderTopColor: colors.border },
       ]}
     >
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => setCurrentTab("favorites")}
-      >
-        <Ionicons
-          name={currentTab === "favorites" ? "star" : "star-outline"}
-          size={22}
-          color={currentTab === "favorites" ? "#FFD700" : colors.subText}
+      {navItems.map((item) => (
+        <NavbarItem
+          key={item.id}
+          item={item}
+          isActive={currentTab === item.id}
+          onPress={() => setCurrentTab(item.id)}
+          colors={colors}
         />
-        <Text
-          style={[
-            styles.navText,
-            { color: currentTab === "favorites" ? "#FFD700" : colors.subText },
-          ]}
-        >
-          Favoriler
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => setCurrentTab("map")}
-      >
-        <Ionicons
-          name={currentTab === "map" ? "map" : "map-outline"}
-          size={22}
-          color={currentTab === "map" ? "#34C759" : colors.subText}
-        />
-        <Text
-          style={[
-            styles.navText,
-            { color: currentTab === "map" ? "#34C759" : colors.subText },
-          ]}
-        >
-          Harita
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => setCurrentTab("home")}
-      >
-        <Ionicons
-          name={currentTab === "home" ? "home" : "home-outline"}
-          size={22}
-          color={currentTab === "home" ? colors.primary : colors.subText}
-        />
-        <Text
-          style={[
-            styles.navText,
-            { color: currentTab === "home" ? colors.primary : colors.subText },
-          ]}
-        >
-          Ana Sayfa
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => setCurrentTab("profile")}
-      >
-        <Ionicons
-          name={currentTab === "profile" ? "person" : "person-outline"}
-          size={22}
-          color={currentTab === "profile" ? colors.primary : colors.subText}
-        />
-        <Text
-          style={[
-            styles.navText,
-            {
-              color: currentTab === "profile" ? colors.primary : colors.subText,
-            },
-          ]}
-        >
-          Profil
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => setCurrentTab("settings")}
-      >
-        <Ionicons
-          name={currentTab === "settings" ? "settings" : "settings-outline"}
-          size={22}
-          color={currentTab === "settings" ? colors.primary : colors.subText}
-        />
-        <Text
-          style={[
-            styles.navText,
-            {
-              color:
-                currentTab === "settings" ? colors.primary : colors.subText,
-            },
-          ]}
-        >
-          Ayarlar
-        </Text>
-      </TouchableOpacity>
+      ))}
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../../lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +22,23 @@ export default function LoginScreen({ onNavigateToRegister }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    loadRememberedEmail();
+  }, []);
+
+  async function loadRememberedEmail() {
+    try {
+      const savedEmail = await AsyncStorage.getItem("rememberedEmail");
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRememberMe(true);
+      }
+    } catch (e) {
+      console.log("E-posta yükleme hatası:", e);
+    }
+  }
 
   async function handleSignIn() {
     if (!email || !password) {
@@ -29,6 +47,7 @@ export default function LoginScreen({ onNavigateToRegister }) {
     }
 
     setLoading(true);
+
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password,
@@ -36,8 +55,19 @@ export default function LoginScreen({ onNavigateToRegister }) {
 
     if (error) {
       Alert.alert("Giriş Başarısız", error.message);
+      setLoading(false);
+    } else {
+      try {
+        if (rememberMe) {
+          await AsyncStorage.setItem("rememberedEmail", email.trim());
+        } else {
+          await AsyncStorage.removeItem("rememberedEmail");
+        }
+      } catch (e) {
+        console.log("Kaydetme hatası:", e);
+      }
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
@@ -88,6 +118,19 @@ export default function LoginScreen({ onNavigateToRegister }) {
                   />
                 </TouchableOpacity>
               </View>
+
+              <TouchableOpacity
+                style={styles.rememberMeContainer}
+                onPress={() => setRememberMe(!rememberMe)}
+                activeOpacity={0.8}
+              >
+                <Ionicons
+                  name={rememberMe ? "checkbox" : "square-outline"}
+                  size={22}
+                  color={rememberMe ? "#007AFF" : "#666"}
+                />
+                <Text style={styles.rememberMeText}>Beni Hatırla</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.button}
