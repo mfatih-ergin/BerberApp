@@ -6,13 +6,16 @@ import {
   BackHandler,
   ToastAndroid,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../lib/supabase";
 import { styles } from "./HomeScreen.styles";
 
 import SettingsScreen from "../Settings/SettingsScreen";
 import ProfileScreen from "../Profile/ProfileScreen";
+import ShopScreen from "../Shop/ShopScreen";
 import BottomNavbar from "../../components/BottomNavbar";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -21,8 +24,42 @@ export default function HomeScreen() {
   const [currentTab, setCurrentTab] = useState("home");
   const [search, setSearch] = useState("");
 
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const navigationHistory = useRef(["home"]);
   const lastBackButtonPress = useRef(0);
+
+  useEffect(() => {
+    fetchUserRole();
+  }, []);
+
+  async function fetchUserRole() {
+    try {
+      setLoading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (data) {
+          setRole(data.role);
+        } else {
+          setRole("customer");
+        }
+      }
+    } catch (error) {
+      console.log("Rol yükleme hatası:", error.message);
+      setRole("customer");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     const backAction = () => {
@@ -74,12 +111,10 @@ export default function HomeScreen() {
     handleTabChange("home");
   };
 
-  return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
-      <View style={{ flex: 1 }}>
-        {currentTab === "home" && (
+  const renderContent = () => {
+    switch (currentTab) {
+      case "home":
+        return (
           <>
             <View style={styles.headerSection}>
               <View
@@ -111,27 +146,78 @@ export default function HomeScreen() {
               </Text>
             </View>
           </>
-        )}
+        );
 
-        {currentTab === "profile" && <ProfileScreen />}
+      case "shop":
+        return <ShopScreen />;
 
-        {currentTab === "settings" && (
-          <SettingsScreen onBack={handleBackNavigation} />
-        )}
+      case "profile":
+        return <ProfileScreen />;
 
-        {(currentTab === "favorites" || currentTab === "map") && (
+      case "settings":
+        return <SettingsScreen onBack={handleBackNavigation} />;
+
+      case "analytics":
+        return (
+          <View style={styles.mainContent}>
+            <Text style={{ color: colors.text }}>
+              Analiz Sayfası Yakında...
+            </Text>
+          </View>
+        );
+
+      case "calendar":
+        return (
+          <View style={styles.mainContent}>
+            <Text style={{ color: colors.text }}>
+              Takvim Sayfası Yakında...
+            </Text>
+          </View>
+        );
+
+      case "favorites":
+      case "map":
+        return (
           <View style={styles.mainContent}>
             <Text style={{ color: colors.text }}>
               {currentTab.toUpperCase()} Sayfası Yakında...
             </Text>
           </View>
-        )}
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
+    );
+  }
+
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <View style={{ flex: 1 }}>{renderContent()}</View>
 
       <BottomNavbar
         currentTab={currentTab}
         setCurrentTab={handleTabChange}
         colors={colors}
+        role={role}
       />
     </SafeAreaView>
   );

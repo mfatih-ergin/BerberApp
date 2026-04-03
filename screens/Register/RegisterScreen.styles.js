@@ -39,6 +39,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
     fontSize: hp("1.8%"),
+    color: "#333",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -53,6 +54,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: hp("1.8%"),
     fontSize: hp("1.8%"),
+    color: "#333",
   },
   eyeIcon: {
     paddingHorizontal: 15,
@@ -100,6 +102,54 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: hp("1.5%"),
     marginTop: hp("1%"),
+    color: "#333",
+  },
+  genderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: hp("2%"),
+    gap: 10,
+  },
+  genderBox: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: hp("1.5%"),
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    alignItems: "center",
+  },
+  genderBoxActive: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  genderText: {
+    fontSize: hp("1.8%"),
+    color: "#666",
+    fontWeight: "600",
+  },
+  genderTextActive: {
+    color: "#fff",
+  },
+  phoneInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: hp("1.5%"),
+    gap: 10,
+  },
+  countryCodeBox: {
+    backgroundColor: "#fff",
+    padding: hp("1.8%"),
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 60,
+  },
+  countryCodeText: {
+    fontSize: hp("1.8%"),
+    fontWeight: "bold",
     color: "#333",
   },
 });

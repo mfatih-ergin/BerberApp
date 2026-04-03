@@ -1,35 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View } from "react-native";
-import { supabase } from "../lib/supabase";
 import { styles } from "../screens/Home/HomeScreen.styles";
 import NavbarItem from "./NavbarItem";
 
-export default function BottomNavbar({ currentTab, setCurrentTab, colors }) {
-  const [role, setRole] = useState("customer");
-
-  useEffect(() => {
-    getUserRole();
-  }, []);
-
-  async function getUserRole() {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-
-        if (data) setRole(data.role);
-      }
-    } catch (error) {
-      console.log("Rol çekme hatası:", error.message);
-    }
-  }
-
+export default function BottomNavbar({
+  currentTab,
+  setCurrentTab,
+  colors,
+  role,
+}) {
   const barberItems = [
     {
       id: "analytics",

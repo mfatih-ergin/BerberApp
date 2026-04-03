@@ -13,11 +13,11 @@ import { supabase } from "../../lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-
 import { styles } from "./RegisterScreen.styles";
 
 export default function RegisterScreen({ onNavigateToLogin }) {
   const [role, setRole] = useState(null);
+  const [gender, setGender] = useState("erkek");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -28,11 +28,19 @@ export default function RegisterScreen({ onNavigateToLogin }) {
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const countryCode = "+90";
+
   async function handleSignUp() {
-    if (!email || !password || !fullName || !location) {
-      Alert.alert("Hata", "Lütfen konum dahil tüm zorunlu alanları doldurun.");
+    if (!email || !password || !fullName || !location || !phone) {
+      Alert.alert("Hata", "Lütfen tüm zorunlu alanları doldurun.");
       return;
     }
+
+    if (phone.length !== 10) {
+      Alert.alert("Hata", "Telefon numarası 10 haneli olmalıdır (5xx...)");
+      return;
+    }
+
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({ email, password });
 
@@ -49,7 +57,8 @@ export default function RegisterScreen({ onNavigateToLogin }) {
           id: user.id,
           full_name: fullName,
           role: role,
-          phone_number: phone,
+          gender: gender,
+          phone_number: `${countryCode}${phone}`,
           location: location,
         },
       ]);
@@ -78,28 +87,19 @@ export default function RegisterScreen({ onNavigateToLogin }) {
           <Ionicons name="arrow-back" size={24} color="#007AFF" />
           <Text style={styles.backButtonText}> Geri Dön</Text>
         </TouchableOpacity>
-
         <Text style={styles.header}>Hoş Geldiniz</Text>
-        <Text style={styles.subHeader}>
-          Devam etmek için bir hesap tipi seçin
-        </Text>
-
+        <Text style={styles.subHeader}>Hesap tipi seçin</Text>
         <TouchableOpacity
           style={styles.roleButton}
           onPress={() => setRole("customer")}
         >
           <Text style={styles.roleButtonText}>👤 Müşteriyim</Text>
-          <Text style={styles.roleDescription}>Randevu almak istiyorum</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           style={[styles.roleButton, { backgroundColor: "#34C759" }]}
           onPress={() => setRole("barber")}
         >
           <Text style={styles.roleButtonText}>💈 Berberim</Text>
-          <Text style={styles.roleDescription}>
-            Dükkanımı yönetmek istiyorum
-          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -111,7 +111,10 @@ export default function RegisterScreen({ onNavigateToLogin }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <TouchableOpacity
             onPress={() => setRole(null)}
             style={styles.backButtonContainer}
@@ -124,6 +127,43 @@ export default function RegisterScreen({ onNavigateToLogin }) {
             {role === "barber" ? "Berber Kaydı" : "Müşteri Kaydı"}
           </Text>
 
+          <Text style={styles.sectionTitle}>Cinsiyet</Text>
+          <View style={styles.genderContainer}>
+            <TouchableOpacity
+              style={[
+                styles.genderBox,
+                gender === "erkek" && styles.genderBoxActive,
+              ]}
+              onPress={() => setGender("erkek")}
+            >
+              <Text
+                style={[
+                  styles.genderText,
+                  gender === "erkek" && styles.genderTextActive,
+                ]}
+              >
+                Erkek
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.genderBox,
+                gender === "kadın" && styles.genderBoxActive,
+              ]}
+              onPress={() => setGender("kadın")}
+            >
+              <Text
+                style={[
+                  styles.genderText,
+                  gender === "kadın" && styles.genderTextActive,
+                ]}
+              >
+                Kadın
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.sectionTitle}>Kişisel Bilgiler</Text>
           <TextInput
             style={styles.input}
             placeholder="Ad Soyad"
@@ -138,17 +178,24 @@ export default function RegisterScreen({ onNavigateToLogin }) {
             autoCapitalize="none"
             keyboardType="email-address"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Telefon"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-          />
+
+          <View style={styles.phoneInputContainer}>
+            <View style={styles.countryCodeBox}>
+              <Text style={styles.countryCodeText}>{countryCode}</Text>
+            </View>
+            <TextInput
+              style={[styles.input, { flex: 1, marginBottom: 0 }]}
+              placeholder="5XX XXX XX XX"
+              value={phone}
+              onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ""))}
+              keyboardType="phone-pad"
+              maxLength={10}
+            />
+          </View>
 
           <TextInput
             style={styles.input}
-            placeholder="Şehir (Örn: İstanbul)"
+            placeholder="Şehir"
             value={location}
             onChangeText={setLocation}
           />
@@ -162,8 +209,8 @@ export default function RegisterScreen({ onNavigateToLogin }) {
               secureTextEntry={!isPasswordVisible}
             />
             <TouchableOpacity
-              style={styles.eyeIcon}
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={styles.eyeIcon}
             >
               <Ionicons
                 name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
@@ -202,18 +249,6 @@ export default function RegisterScreen({ onNavigateToLogin }) {
           >
             <Text style={styles.buttonText}>
               {loading ? "Kaydediliyor..." : "Kayıt Ol"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={onNavigateToLogin}
-            style={{ marginTop: 20, alignItems: "center" }}
-          >
-            <Text style={{ color: "#666" }}>
-              Zaten hesabınız var mı?{" "}
-              <Text style={{ color: "#007AFF", fontWeight: "bold" }}>
-                Giriş Yap
-              </Text>
             </Text>
           </TouchableOpacity>
         </ScrollView>
