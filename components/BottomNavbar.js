@@ -2,6 +2,8 @@ import React from "react";
 import { View } from "react-native";
 import { styles } from "../screens/Home/HomeScreen.styles";
 import NavbarItem from "./NavbarItem";
+import { BARBER_NAV_ITEMS, CUSTOMER_NAV_ITEMS } from "../constants/navigation";
+import { ROLES } from "../constants/roles";
 
 export default function BottomNavbar({
   currentTab,
@@ -9,38 +11,8 @@ export default function BottomNavbar({
   colors,
   role,
 }) {
-  const barberItems = [
-    {
-      id: "analytics",
-      label: "Analiz",
-      icon: "analytics",
-      activeColor: "#FFD700",
-    },
-    {
-      id: "calendar",
-      label: "Takvim",
-      icon: "calendar",
-      activeColor: "#34C759",
-    },
-    { id: "home", label: "Ana Sayfa", icon: "home" },
-    { id: "shop", label: "Dükkan", icon: "storefront" },
-    { id: "settings", label: "Ayarlar", icon: "settings" },
-  ];
-
-  const customerItems = [
-    {
-      id: "favorites",
-      label: "Favoriler",
-      icon: "star",
-      activeColor: "#FFD700",
-    },
-    { id: "map", label: "Harita", icon: "map", activeColor: "#34C759" },
-    { id: "home", label: "Ana Sayfa", icon: "home" },
-    { id: "profile", label: "Profil", icon: "person" },
-    { id: "settings", label: "Ayarlar", icon: "settings" },
-  ];
-
-  const navItems = role === "barber" ? barberItems : customerItems;
+  const navItems =
+    role === ROLES.BARBER ? BARBER_NAV_ITEMS : CUSTOMER_NAV_ITEMS;
 
   return (
     <View

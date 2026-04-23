@@ -19,6 +19,8 @@ import ShopScreen from "../Shop/ShopScreen";
 import BottomNavbar from "../../components/BottomNavbar";
 import { useTheme } from "../../context/ThemeContext";
 
+import { ROLES } from "../../constants/roles";
+
 export default function HomeScreen() {
   const { theme, colors } = useTheme();
   const [currentTab, setCurrentTab] = useState("home");
@@ -50,12 +52,12 @@ export default function HomeScreen() {
         if (data) {
           setRole(data.role);
         } else {
-          setRole("customer");
+          setRole(ROLES.CUSTOMER);
         }
       }
     } catch (error) {
       console.log("Rol yükleme hatası:", error.message);
-      setRole("customer");
+      setRole(ROLES.CUSTOMER);
     } finally {
       setLoading(false);
     }

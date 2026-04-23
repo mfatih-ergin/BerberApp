@@ -10,12 +10,16 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground,
+  StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../../lib/supabase";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./LoginScreen.styles";
+import { Colors } from "../../styles/Colors";
+
+const localBgImage = require("../../images/Login-Background-Image.png");
 
 export default function LoginScreen({ onNavigateToRegister }) {
   const [email, setEmail] = useState("");
@@ -47,7 +51,6 @@ export default function LoginScreen({ onNavigateToRegister }) {
     }
 
     setLoading(true);
-
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password,
@@ -71,87 +74,108 @@ export default function LoginScreen({ onNavigateToRegister }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+    <View style={{ flex: 1 }}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <ImageBackground
+        source={localBgImage}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
+        <View style={styles.overlay}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
           >
-            <View style={styles.headerContainer}>
-              <Text style={styles.header}>Tekrar Merhaba! 👋</Text>
-              <Text style={styles.subHeader}>Hesabınıza giriş yapın</Text>
-            </View>
-
-            <View style={styles.formContainer}>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="E-posta"
-                  value={email}
-                  onChangeText={setEmail}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                />
-              </View>
-
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.passwordInput}
-                  placeholder="Şifre"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!isPasswordVisible}
-                />
-                <TouchableOpacity
-                  style={styles.eyeIcon}
-                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                >
-                  <Ionicons
-                    name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
-                    size={22}
-                    color="#666"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity
-                style={styles.rememberMeContainer}
-                onPress={() => setRememberMe(!rememberMe)}
-                activeOpacity={0.8}
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
               >
-                <Ionicons
-                  name={rememberMe ? "checkbox" : "square-outline"}
-                  size={22}
-                  color={rememberMe ? "#007AFF" : "#666"}
-                />
-                <Text style={styles.rememberMeText}>Beni Hatırla</Text>
-              </TouchableOpacity>
+                <View style={styles.whiteCard}>
+                  <View style={styles.headerContainer}>
+                    <Text style={styles.header}>Giriş Yap</Text>
+                    <Text style={styles.subHeader}>Hesabınıza giriş yapın</Text>
+                  </View>
 
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleSignIn}
-                disabled={loading}
-              >
-                <Text style={styles.buttonText}>
-                  {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
-                </Text>
-              </TouchableOpacity>
+                  <View style={styles.formContainer}>
+                    <View style={styles.inputContainer}>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="E-posta"
+                        placeholderTextColor="#999"
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                      />
+                    </View>
 
-              <View style={styles.footer}>
-                <Text style={styles.footerText}>Hesabınız yok mu? </Text>
-                <TouchableOpacity onPress={onNavigateToRegister}>
-                  <Text style={styles.linkText}>Kayıt Ol</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+                    <View style={styles.passwordContainer}>
+                      <TextInput
+                        style={styles.passwordInput}
+                        placeholder="Şifre"
+                        placeholderTextColor="#999"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={!isPasswordVisible}
+                      />
+                      <TouchableOpacity
+                        style={styles.eyeIcon}
+                        onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                      >
+                        <Ionicons
+                          name={
+                            isPasswordVisible
+                              ? "eye-outline"
+                              : "eye-off-outline"
+                          }
+                          size={22}
+                          color="#666"
+                        />
+                      </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.rememberMeContainer}
+                      onPress={() => setRememberMe(!rememberMe)}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons
+                        name={rememberMe ? "checkbox" : "square-outline"}
+                        size={22}
+                        color={rememberMe ? Colors.green : "#CCC"}
+                      />
+                      <Text style={styles.rememberMeText}>Beni Hatırla</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handleSignIn}
+                      disabled={loading}
+                    >
+                      <Text style={styles.buttonText}>
+                        {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.footer}>
+                      <Text style={styles.footerText}>Hesabınız yok mu? </Text>
+                      <TouchableOpacity onPress={onNavigateToRegister}>
+                        <Text style={styles.linkText}>Kayıt Ol</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </ScrollView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </View>
+      </ImageBackground>
+    </View>
   );
 }

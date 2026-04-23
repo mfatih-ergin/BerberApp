@@ -1,108 +1,119 @@
-import { StyleSheet } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { StyleSheet, Dimensions } from "react-native";
+import { Colors } from "../../styles/Colors";
+
+const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    width: "100%",
+    height: "100%",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    paddingHorizontal: 20,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: wp("8%"),
     justifyContent: "center",
-    paddingBottom: hp("5%"),
+  },
+  whiteCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 30,
+    paddingVertical: 40,
+    paddingHorizontal: 25,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 10,
   },
   headerContainer: {
-    marginBottom: hp("4%"),
+    marginBottom: 30,
     alignItems: "center",
   },
   header: {
-    fontSize: hp("3.5%"),
+    fontSize: 28,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: hp("1%"),
+    textAlign: "center",
   },
   subHeader: {
-    fontSize: hp("1.8%"),
+    fontSize: 16,
     color: "#666",
+    marginTop: 8,
+    textAlign: "center",
   },
   formContainer: {
     width: "100%",
   },
   inputContainer: {
-    marginBottom: hp("2%"),
+    marginBottom: 15,
   },
   input: {
-    backgroundColor: "#fff",
-    padding: hp("1.8%"),
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    fontSize: hp("1.8%"),
+    backgroundColor: "#F5F5F5",
+    padding: 18,
+    borderRadius: 15,
+    fontSize: 16,
     color: "#333",
+    borderWidth: 1,
+    borderColor: "#EEE",
   },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
+    backgroundColor: "#F5F5F5",
+    borderRadius: 15,
+    marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
-    marginBottom: hp("3%"),
+    borderColor: "#EEE",
   },
   passwordInput: {
     flex: 1,
-    padding: hp("1.8%"),
-    fontSize: hp("1.8%"),
+    padding: 18,
+    fontSize: 16,
     color: "#333",
   },
   eyeIcon: {
     paddingHorizontal: 15,
   },
-  button: {
-    backgroundColor: "#007AFF",
-    padding: hp("2%"),
-    borderRadius: 12,
+  rememberMeContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    marginTop: hp("1%"),
+    marginBottom: 25,
+    marginTop: 5,
+  },
+  rememberMeText: {
+    color: "#444",
+    marginLeft: 10,
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  button: {
+    padding: 18,
+    borderRadius: 15,
+    alignItems: "center",
+    backgroundColor: Colors.dark_green,
   },
   buttonText: {
-    color: "#fff",
-    fontSize: hp("2%"),
+    color: "#FFF",
+    fontSize: 18,
     fontWeight: "bold",
   },
   footer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: hp("4%"),
+    marginTop: 30,
   },
   footerText: {
-    fontSize: hp("1.7%"),
-    color: "#666",
+    color: "#777",
+    fontSize: 15,
   },
   linkText: {
-    fontSize: hp("1.7%"),
-    color: "#007AFF",
+    color: Colors.green,
+    fontSize: 15,
     fontWeight: "bold",
-  },
-  rememberMeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    paddingLeft: 5,
-  },
-  rememberMeText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#444",
-    fontWeight: "500",
   },
 });
