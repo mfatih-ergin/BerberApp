@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./styles/RegisterScreen.styles";
+import { registerStyles as styles } from "./styles/RegisterScreen.styles";
 
 export default function CommonRegisterFields({
   formData,
@@ -16,6 +16,7 @@ export default function CommonRegisterFields({
         {["erkek", "kadın"].map((g) => (
           <TouchableOpacity
             key={g}
+            activeOpacity={0.7}
             style={[
               styles.genderBox,
               formData.gender === g && styles.genderBoxActive,
@@ -38,16 +39,17 @@ export default function CommonRegisterFields({
       <TextInput
         style={styles.input}
         placeholder="Ad Soyad"
+        placeholderTextColor="#999"
         value={formData.fullName}
         onChangeText={(t) => setFormData({ ...formData, fullName: t })}
       />
+
       <TextInput
         style={styles.input}
-        placeholder="E-posta"
-        value={formData.email}
-        onChangeText={(t) => setFormData({ ...formData, email: t })}
-        autoCapitalize="none"
-        keyboardType="email-address"
+        placeholder="Şehir"
+        placeholderTextColor="#999"
+        value={formData.location}
+        onChangeText={(t) => setFormData({ ...formData, location: t })}
       />
 
       <View style={styles.phoneInputContainer}>
@@ -57,6 +59,7 @@ export default function CommonRegisterFields({
         <TextInput
           style={[styles.input, { flex: 1, marginBottom: 0 }]}
           placeholder="5XX XXX XX XX"
+          placeholderTextColor="#999"
           value={formData.phone}
           onChangeText={(t) =>
             setFormData({ ...formData, phone: t.replace(/[^0-9]/g, "") })
@@ -68,15 +71,19 @@ export default function CommonRegisterFields({
 
       <TextInput
         style={styles.input}
-        placeholder="Şehir"
-        value={formData.location}
-        onChangeText={(t) => setFormData({ ...formData, location: t })}
+        placeholder="E-posta"
+        placeholderTextColor="#999"
+        value={formData.email}
+        onChangeText={(t) => setFormData({ ...formData, email: t })}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
 
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
           placeholder="Şifre"
+          placeholderTextColor="#999"
           value={formData.password}
           onChangeText={(t) => setFormData({ ...formData, password: t })}
           secureTextEntry={!isPasswordVisible}

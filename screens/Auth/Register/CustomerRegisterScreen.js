@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import {
+  View,
   Text,
   TouchableOpacity,
   Alert,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
+  ActivityIndicator,
 } from "react-native";
-import { supabase } from "../../lib/supabase";
-import { styles } from "./styles/RegisterScreen.styles";
-import { ROLES } from "../../constants/roles";
+import { supabase } from "../../../lib/supabase";
+import { registerStyles as styles } from "./styles/RegisterScreen.styles";
+import { ROLES } from "../../../constants/roles";
 import CommonRegisterFields from "./CommonRegisterFields";
+import RegisterHeader from "./RegisterHeader";
 
-export default function CustomerRegisterScreen() {
+export default function CustomerRegisterScreen({ onBack }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,7 +26,6 @@ export default function CustomerRegisterScreen() {
 
   const handleSignUp = async () => {
     const { email, password, fullName, phone, location, gender } = formData;
-
     if (!email || !password || !fullName || !location || !phone) {
       Alert.alert("Hata", "Lütfen tüm alanları doldurun.");
       return;
@@ -52,42 +51,35 @@ export default function CustomerRegisterScreen() {
           location,
         },
       ]);
-
-      if (!profileError) {
+      if (!profileError)
         Alert.alert("Başarılı!", "Müşteri kaydınız tamamlandı.");
-      } else {
-        Alert.alert("Profil Hatası", profileError.message);
-      }
+      else Alert.alert("Hata", profileError.message);
     }
     setLoading(false);
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <CommonRegisterFields
-          formData={formData}
-          setFormData={setFormData}
-          isPasswordVisible={isPasswordVisible}
-          setIsPasswordVisible={setIsPasswordVisible}
-        />
+    <View style={styles.formWrapper}>
+      <RegisterHeader onBack={onBack} title="Müşteri Kaydı" />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSignUp}
-          disabled={loading}
-        >
-          <Text style={styles.buttonText}>
-            {loading ? "Kaydediliyor..." : "Kayıt Ol"}
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <CommonRegisterFields
+        formData={formData}
+        setFormData={setFormData}
+        isPasswordVisible={isPasswordVisible}
+        setIsPasswordVisible={setIsPasswordVisible}
+      />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSignUp}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#FFF" />
+        ) : (
+          <Text style={styles.buttonText}>Kayıt Ol</Text>
+        )}
+      </TouchableOpacity>
+    </View>
   );
 }

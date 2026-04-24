@@ -6,9 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "./lib/supabase";
 
-import LoginScreen from "./screens/Login/LoginScreen";
-import RegisterScreen from "./screens/Register/RegisterScreen";
 import HomeScreen from "./screens/Home/HomeScreen";
+import AuthScreen from "./screens/Auth/AuthScreen";
 
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
@@ -25,8 +24,6 @@ export default function App() {
 function MainLayout() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isRegistering, setIsRegistering] = useState(false);
-
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -38,8 +35,8 @@ function MainLayout() {
           data: { session },
           error,
         } = await supabase.auth.getSession();
-
         if (error) console.log("Oturum kontrol hatası:", error.message);
+
         setSession(session);
       } catch (e) {
         console.warn("Uygulama hazırlık hatası:", e);
@@ -84,13 +81,7 @@ function MainLayout() {
     <View style={styles.fullContainer}>
       <StatusBar style={theme === "dark" ? "light" : "dark"} />
 
-      {session ? (
-        <HomeScreen />
-      ) : isRegistering ? (
-        <RegisterScreen onNavigateToLogin={() => setIsRegistering(false)} />
-      ) : (
-        <LoginScreen onNavigateToRegister={() => setIsRegistering(true)} />
-      )}
+      {session ? <HomeScreen /> : <AuthScreen />}
     </View>
   );
 }
